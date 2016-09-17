@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no" />
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="robots" content="noindex, nofollow">
   <meta name="googlebot" content="noindex, nofollow">
@@ -16,36 +16,32 @@ body {
 }
 
 .board {
-  padding-top:10vh;
   background-color: #111;
   text-align: center;
-  height: 35vh;
-  width: 42vh;
-  margin:auto;
+  height: 41vh;
 }
 
 .inline-menu {
   background-color: #111;
-  height: 7vh;
-  width: 42vh;
+  height: 8vh;
   margin:auto;
   color: #ddd;
 }
 .inline-menu table{
-  width: 95%;
+  width: 100%;
 }
 .inline-menu tr{
   text-align: center;
-  font-size: 3.5vh;
+  font-size: 4vh;
 }
 .button {
-  margin: 1vh;
+  margin: 4vh;
   position: relative;
   background-color: #111;
   border: 3pt solid green;
 /*  padding: 1.5vh;  */
-  width: 10vh;
-  height: 10vh;
+  width: 13vh;
+  height: 13vh;
   text-align: center;
   touch-action: manipulation; 
   border-radius: 50%;
@@ -118,7 +114,7 @@ text-align: center;
 }
 
 
-#endgame
+#winner
 {
     position:fixed;
     padding:0;
@@ -131,7 +127,7 @@ text-align: center;
     height: 100%;
     background:rgba(0,0,0,0.9);
 }
-#end div {
+#winner div {
 width: 40vh;
 margin-top:20vh;
 margin-left:auto;
@@ -139,8 +135,22 @@ margin-right:auto;
 height:20vh;
 text-align: center;
 }
-#end a{
-  color:#fff;
+.outer {
+    display: table;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.middle {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.inner {
+    margin-left: auto;
+    margin-right: auto; 
+    max-width: 90vh; /*whatever width you want*/;
 }
 </style>
 
@@ -150,6 +160,10 @@ text-align: center;
 </head>
 
 <body>
+<div class="outer">
+<div class="middle">
+<div class="inner">
+
   <div id="player1" class="board" onClick="boardClick(event,this)">
   <button class='button' data-rb='0'></button>
   <button class='button' data-rb='1'></button>
@@ -166,7 +180,6 @@ text-align: center;
 </tr>
 </table>
 </div>
-</div>
 <div id="player2" class="board" onClick="boardClick(event,this)" >
   <button class='button' data-rb='3'></button>
   <button class='button' data-rb='4'></button>
@@ -174,7 +187,11 @@ text-align: center;
   <button class='button' data-rb='0'></button>
   <button class='button' data-rb='1'></button>
   <button class='button' data-rb='2'></button>
-  </div>
+</div>
+</div>
+</div>
+</div>
+
 <div id="about">
 <div>
   <a href="#">about AllMine</a>
@@ -195,13 +212,12 @@ text-align: center;
 </div>
 
   
-<div id="endgame" style="display:none;">
+<div id="winner" style="display:none;">
 <div>
   <a href="#">game ended</a>
-  <p>Player <span>pobednik</span> win.</p>
+  <p></p>
 </div>
 <div><a href="#"  onClick="Play()">Play again</a></div>
-<div><a href="#"  onClick="Quit()">End game</a></div>
 
 </div>
 
@@ -221,14 +237,11 @@ function timerShow(){
       document.querySelectorAll("td.timer").forEach(function(item,index){
         item.innerHTML= ((minutes<10)?'0':'') + minutes+ ':' + ((seconds<10)?'0':'')+ seconds;
       });
-      checkWinner();
+
     }
     startingTime=new Date();
     timer = setTimeout(timerShow, 1000);
 
-}
-
-function checkWinner(){
 }
 
 function Play(){
@@ -238,6 +251,10 @@ function Play(){
   //hide pause
   a=document.getElementById("pause");
   a.style.display = 'none';
+  //hide winner
+  a=document.getElementById("winner");
+  a.style.display = 'none';
+
   //start timer
     if(timer) clearTimeout(timer);
   startingTime=new Date();
@@ -245,6 +262,7 @@ function Play(){
   paused=false;
   timer = setTimeout(timerShow, 1000);
   document.querySelectorAll("td.timer").forEach(function(item,index){item.innerHTML='00:00';});
+  document.querySelectorAll("button.button").forEach(function(item,index){item.setAttribute("class", "button");});
 }
 function Resume(){
   //hide pause
@@ -278,9 +296,37 @@ function boardClick(e, p) {
     }
     e.target.setAttribute("class", newClass);
     a.setAttribute("class", newClass);
+    checkWinner();
   }
+}
+
+function Winner(message){
+//stop timer
+  paused=true;
+//show about
+  var a=document.getElementById("winner");
+  a.querySelector("p").innerHTML=message;
+  a.style.display = 'block';
+}
+
+function checkWinner(){
+  var p1=0,p2=0;
+  var board=document.getElementById("player1");
+  p1=0;p2=0;
+  board.querySelectorAll("button.button").forEach(function(item,index){
+      var c=item.getAttribute("class");
+      if(c.indexOf("player1")>0) p1++;
+      if(c.indexOf("player2")>0) p2++;
+  });
+  if(p1==5){
+    Winner("Player 1 is winner!");
+  } 
+  if(p2==5){
+    Winner("Player 2 is winner!");
+  } 
 
 }
+
 /*
 var noButtons = 6;
 var htm = '';
