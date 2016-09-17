@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+
+    <style type="text/css">
+body {
+  font-family: "Lucida Console", Monaco, monospace;
+  background-color: #111;
+  font-size: 3vh;
+}
+
+.board {
+  background-color: #111;
+  text-align: center;
+  height: 44vh;
+  width: 70vh;
+  margin:auto;
+}
+
+.inline-menu {
+  background-color: #111;
+  height: 9vh;
+  width: 70vh;
+  margin:auto;
+  color: #ddd;
+}
+.inline-menu table{
+  width: 100%;
+}
+.inline-menu tr{
+  text-align: center;
+  font-size: 4vh;
+}
+.button {
+  margin: 4vh;
+  position: relative;
+  background-color: #111;
+  border: 3pt solid green;
+/*  padding: 1.5vh;  */
+  width: 13vh;
+  height: 13vh;
+  text-align: center;
+  touch-action: manipulation; 
+  border-radius: 50%;
+  outline: none;
+}
+.player1 {
+  border-color: red
+}
+
+.player2 {
+  border-color: yellow
+}
+.vflip{
+-webkit-transform: rotate(180deg);
+-moz-transform: rotate(180deg);
+-ms-transform: rotate(180deg);
+-o-transform: rotate(180deg);
+filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+}
+
+#about
+{
+    position:fixed;
+    padding:0;
+    margin:0;
+    color: white;
+    top:0;
+    left:0;
+
+    width: 100%;
+    height: 100%;
+    background:rgba(0,0,0,0.9);
+}
+#about div {
+width: 40vh;
+margin-top:20vh;
+margin-left:auto;
+margin-right:auto;
+height:20vh;
+text-align: center;
+}
+#about a{
+  color:#fff;
+}
+
+
+#pause
+{
+    position:fixed;
+    padding:0;
+    margin:0;
+    color: white;
+    top:0;
+    left:0;
+
+    width: 100%;
+    height: 100%;
+    background:rgba(0,0,0,1);
+}
+#pause div {
+width: 40vh;
+margin-top:15vh;
+margin-left:auto;
+margin-right:auto;
+height:15vh;
+text-align: center;
+}
+#pause a{
+  color:#fff;
+}
+
+
+#end
+{
+    position:fixed;
+    padding:0;
+    margin:0;
+    color: white;
+    top:0;
+    left:0;
+
+    width: 100%;
+    height: 100%;
+    background:rgba(0,0,0,0.9);
+}
+#end div {
+width: 40vh;
+margin-top:20vh;
+margin-left:auto;
+margin-right:auto;
+height:20vh;
+text-align: center;
+}
+#end a{
+  color:#fff;
+}
+</style>
+
+  <title>AllMine by bdpsoft</title>
+
+  
+</head>
+
+<body>
+  <div id="player1" class="board" onClick="boardClick(event,this)">
+  <button class='button' data-rb='0'></button>
+  <button class='button' data-rb='1'></button>
+  <button class='button' data-rb='2'></button>
+  <br>
+  <button class='button' data-rb='3'></button>
+  <button class='button' data-rb='4'></button>
+</div>
+<div id="menu" class="inline-menu" onClick="Pause()"><table><tr>
+  <td class="timer">02:35</td>
+  <td class="pause">pause</td>
+  <td class="pause vflip">pause</td>
+  <td class="timer vflip">02:35</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="player2" class="board" onClick="boardClick(event,this)" >
+  <button class='button' data-rb='3'></button>
+  <button class='button' data-rb='4'></button>
+  <br>
+  <button class='button' data-rb='0'></button>
+  <button class='button' data-rb='1'></button>
+  <button class='button' data-rb='2'></button>
+  </div>
+<div id="about">
+<div>
+  <a href="#">about AllMine</a>
+  <p>Be faster then your friend. Click on all your circles. </p>
+</div>
+<div><a href="#"  onClick="Play()">Play</a></div>
+
+</div>
+  
+<div id="pause" style="display:none;">
+<div>
+  <a href="#">AllMine paused</a>
+  <p>Click resume to continue playing.  </p>
+</div>
+<div><a href="#"  onClick="Resume()">Resume</a></div>
+<div><a href="#"  onClick="Play()">Play again</a></div>
+
+</div>
+
+  
+<div id="endgame" style="display:none;">
+<div>
+  <a href="#">game ended</a>
+  <p>Player <span>pobednik</span> win.</p>
+</div>
+<div><a href="#"  onClick="Play()">Play again</a></div>
+<div><a href="#"  onClick="Quit()">End game</a></div>
+
+</div>
+
+
+<script type='text/javascript'>//<![CDATA[
+var timer = null;
+var startingTime=null;
+var ticksPased=0;
+var paused=false;
+
+function timerShow(){
+   if (!paused){
+      var now=new Date();
+      ticksPased+=now-startingTime;
+      var minutes = Math.floor((ticksPased/60000)),
+          seconds = Math.floor((ticksPased - (minutes * 60000))/1000);
+      document.querySelectorAll("td.timer").forEach(function(item,index){
+        item.innerHTML= ((minutes<10)?'0':'') + minutes+ ':' + ((seconds<10)?'0':'')+ seconds;
+      });
+      checkWinner();
+    }
+    startingTime=new Date();
+    timer = setTimeout(timerShow, 1000);
+
+}
+
+function checkWinner(){
+}
+
+function Play(){
+  //hide about
+  var a=document.getElementById("about");
+  a.style.display = 'none';
+  //hide pause
+  a=document.getElementById("pause");
+  a.style.display = 'none';
+  //start timer
+    if(timer) clearTimeout(timer);
+  startingTime=new Date();
+  ticksPased=0;
+  paused=false;
+  timer = setTimeout(timerShow, 1000);
+  document.querySelectorAll("td.timer").forEach(function(item,index){item.innerHTML='00:00';});
+}
+function Resume(){
+  //hide pause
+  var a=document.getElementById("pause");
+  a.style.display = 'none';
+  //start timer
+  paused=false;
+}
+function Pause(){
+//stop timer
+  paused=true;
+//show about
+  var a=document.getElementById("pause");
+  a.style.display = 'block';
+//set title to resume
+
+}
+
+function Quit(){
+}
+
+function boardClick(e, p) {
+  //alert(e.target.getAttribute("data-rb")+'/'+p.id);
+  if (e.target.getAttribute("data-rb")) {
+  	var otherId='player1';if(otherId==p.id) otherId='player2'
+    var player=document.getElementById(otherId);
+  	var a = player.querySelector('button[data-rb="'+e.target.getAttribute("data-rb")+'"]');
+    var newClass="button " + p.id;
+    if(e.target.getAttribute("class")==newClass){
+    	newClass="button"
+    }
+    e.target.setAttribute("class", newClass);
+    a.setAttribute("class", newClass);
+  }
+
+}
+/*
+var noButtons = 6;
+var htm = '';
+for (var i = 0; i < noButtons; i++) {
+  htm += "<button class='button' data-rb='" + i + "'></button>";
+}
+var d1 = document.getElementById("player1");
+d1.innerHTML = htm;
+var d2 = document.getElementById("player2");
+d2.innerHTML = htm;
+*/
+//]]> 
+
+</script>
+
+</body>
+
+</html>
