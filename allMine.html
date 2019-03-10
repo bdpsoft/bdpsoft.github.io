@@ -339,10 +339,7 @@ var d2 = document.getElementById("player2");
 d2.innerHTML = htm;
 */
 //]]>
-function stopEvent(ev) {
-  ev.preventDefault();
-  ev.stopPropagation();
-}
+
 function preventZoom(e) {
   var t2 = e.timeStamp;
   var t1 = e.currentTarget.dataset.lastTouch || t2;
@@ -355,10 +352,10 @@ function preventZoom(e) {
   e.preventDefault();
   e.target.click();
 }
-//  myButton.addEventListener('touchstart', preventZoom); 
+var about=document.getElementById("about");
+about.addEventListener('touchstart', preventZoom); 
 
 window.scrollTo(0,1); //hide nav bar
-document.body.addEventListener("click", stopEvent, false);
 </script>
 
 </body>
