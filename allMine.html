@@ -159,7 +159,7 @@ text-align: center;
   
 </head>
 
-<body onclick="return false;">
+<body>
 <div class="outer">
 <div class="middle">
 <div class="inner">
@@ -338,8 +338,14 @@ d1.innerHTML = htm;
 var d2 = document.getElementById("player2");
 d2.innerHTML = htm;
 */
-//]]> 
+//]]>
+function stopEvent(ev) {
+  ev.preventDefault();
+  ev.stopPropagation();
+}
+
 window.scrollTo(0,1); //hide nav bar
+document.body.addEventListener("click", stopEvent, false);
 </script>
 
 </body>
